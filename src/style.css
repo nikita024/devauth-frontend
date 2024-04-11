@@ -1,0 +1,311 @@
+body {
+  margin: 0;
+}
+
+.navbar {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0px;
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+  width: 50px;
+  margin-left: 30px;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.link {
+  margin-right: 10px;
+  color: #000000;
+  text-decoration: none;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.write {
+  margin-left: auto;
+}
+
+.links > span {
+  margin-right: 10px;
+  font-weight: bold; 
+  cursor: pointer;
+}
+
+.link.login {
+  margin-right: 10px; 
+}
+
+.login-link {
+  color: #000;
+  background-color: rgb(211, 216, 252);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.links h6 {
+  margin: 0px 10px;
+  font-size: 16px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: transparent;
+  color: #000;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #000;
+  min-width: 160px;
+  z-index: 1;
+  margin-top: 5px;
+}
+
+.dropdown-content span {
+  display: block;
+  color: #fff;
+  margin-left: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dropdown-content span:hover {
+  background-color: #000;
+}
+
+.sidebar {
+  background-color: #ffffff;
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 900;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+}
+
+.sidebar ul li a:hover {
+  color: #555;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.sidebar ul li:hover {
+    background-color: rgb(211, 216, 252);
+    border-radius: 5px;
+  }
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.sidebar ul li a:hover {
+  color: #555;
+}
+
+.content-container {
+  padding: 10px;
+  margin-left: 200px;
+  background-color: #fff;
+}
+
+.dashboard-container {
+  padding: 60px 20px;
+}
+
+.profile-container {
+  padding-top: 60px;
+  padding-left: 20px;
+}
+
+
+.register-page {
+  background-image: url('./assets/image/imagelogin.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.register-card h1 {
+  text-align: center;
+}
+
+.register-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-card .form-group {
+  margin-bottom: 15px;
+}
+
+.register-card label {
+  margin-bottom: 5px;
+  display: block; 
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.register-card input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 22px);
+}
+
+.register-card button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-card button:hover {
+  background-color: #0056b3;
+}
+
+.register-card p {
+  margin-top: 10px;
+  color: #dc3545;
+}
+
+.register-card span {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.register-card span a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-card span a:hover {
+  text-decoration: underline;
+}
+
+
+
+.profile-form-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  width: 500px;
+}
+
+.profile-form-card h1 {
+  text-align: center;
+}
+
+.profile-form-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-form-card .form-group {
+  margin-bottom: 15px;
+}
+
+.profile-form-card input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 22px);
+}
+
+.profile-form-card textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 22px);
+}
+
+.profile-form-card button {
+  width: 25%;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.profile-form-card button:hover {
+  background-color: #0056b3;
+}
+
+
+
+footer {
+  background-color: #fff;
+  color: #000;
+  padding: 5px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer img {
+  width: 20px;
+  vertical-align: middle;
+}
+
+footer span {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
