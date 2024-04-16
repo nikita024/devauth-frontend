@@ -12,7 +12,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const [err, setError] = useState(null);
   const { currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
@@ -22,22 +21,25 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/users/register", inputs);
-      toast.success("Registration successful! Please login.");
-      navigate("/login");
+      const res = await axios.post("http://localhost:8080/api/users/register", inputs);
+
+      if (res.data) {
+        alert("Register Successfully!");
+        toast.success("Register Successfully!");
+        navigate("/login");
+      }
     } catch (err) {
       toast.error(err.response.data)
-      setError(err.response.data);
     }
   };
 
-  useEffect(() => {
+ 
+ useEffect(() => {
     console.log("currentUser: ", currentUser);
     if (currentUser) {
       navigate("/dashboard");
     }
   }, [currentUser, navigate]);
-
   return (
     <div className="register-page">
       <div className="register-card">
@@ -80,7 +82,6 @@ const Register = () => {
             />
           </div>
           <button onClick={handleSubmit}>Register</button>
-          {err && <p>{err}</p>}
           <span>
             Already have an account? <Link to="/login">Login</Link>
           </span>

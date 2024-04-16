@@ -16,7 +16,8 @@ const Navbar = () => {
 
   useEffect(() => {
     console.log("currentUser: ", currentUser);
-    if (!currentUser) {
+    const accessToken = localStorage.getItem("user");
+    if (!currentUser && !accessToken) {
       navigate("/login");
     }
   }, [currentUser, navigate]);

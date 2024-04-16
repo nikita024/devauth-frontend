@@ -11,7 +11,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const [err, setError] = useState(null);
   const { login, currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
@@ -22,20 +21,21 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(inputs)
+      alert("Login Successfully!")
       toast.success("Login Successful")
-      navigate("/dashboard");
     } catch (err) {
       toast.error(err.response.data)
-      setError(err.response.data);
     }
   };
 
   useEffect(() => {
     console.log("currentUser: ", currentUser);
-    if (currentUser) {
+    const accessToken = localStorage.getItem("user");
+    if (accessToken) {
       navigate("/dashboard");
     }
   }, [currentUser, navigate]);
+
 
   return (
     <div className="register-page">
@@ -67,13 +67,12 @@ const Login = () => {
             />
           </div>
           <button onClick={handleSubmit}>Login</button>
-          {err && <p>{err}</p>}
           <span>
             New User? <Link to="/register">Register</Link>
           </span>
         </form>
-        <ToastContainer />
       </div>
+      <ToastContainer />
     </div>
   );
 };

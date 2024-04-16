@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const Home = () => {
 
   const navigate = useNavigate(); 
   const { currentUser } = useContext(AuthContext);
@@ -24,4 +24,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Home;

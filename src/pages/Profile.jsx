@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { formatDate, getCookie } from '../utils';
+import { formatDate } from '../utils';
 import Loader from '../components/Loader';
 
 const Profile = () => {
@@ -17,6 +17,8 @@ const Profile = () => {
     profile_pic: ''
   });
 
+  const [newEmail, setNewEmail] = useState('');
+
   const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
@@ -25,20 +27,41 @@ const Profile = () => {
     setProfileData({ ...profileData, [name]: value });
   };
 
+  const emailEditChange = (e) => {
+    const newEmail = e.target.value;
+    setProfileData({ ...profileData, email: newEmail });
+  };
+
   const handleImageChange = (e) => {
     setProfileData({ ...profileData, profile_pic: e.target.files[0] });
   };
+
+  const handleEditEmail = async () => {
+    try {
+      const response = await axios.put(`http://localhost:8080/api/users/edit-email/${currentUser.id}`, { newEmail: profileData.email }, {
+        headers: {
+          'x-auth-token': currentUser.token,
+        }
+      });
+      toast.success('Email updated successfully!');
+      console.log(response.data);
+    } catch (error) {
+      toast.error(error.response.data);
+      console.error('Error updating email:', error);
+    }
+  };
+  
+
 
   const handleUpdateProfile = async (e) => {
       e.preventDefault();
       setLoading(true); 
       try {
-          const accessToken = getCookie('access_token');
 
           if (!profileData.id) {
               const createResponse = await axios.post('http://localhost:8080/api/profile', profileData, {
                   headers: {
-                      'x-auth-token': accessToken,
+                      'x-auth-token': currentUser.token,
                       'Content-Type': 'multipart/form-data'
                   }
               });
@@ -50,7 +73,7 @@ const Profile = () => {
 
           const updateResponse = await axios.put(`http://localhost:8080/api/profile/${profileData.id}`, profileData, {
               headers: {
-                  'x-auth-token': accessToken,
+                  'x-auth-token': currentUser.token,
                   'Content-Type': 'multipart/form-data'
               }
           });
@@ -92,9 +115,13 @@ const Profile = () => {
     fetchProfileData();
   }
 
+  // const handleEditEmail = () => {
+  //   alert("emailid edit");
+  // }
   useEffect(() => {
     console.log("currentUser: ", currentUser);
-    if (!currentUser) {
+    const accessToken = localStorage.getItem("user");
+    if (!currentUser && !accessToken) {
       navigate("/login");
     }
   }, [currentUser, navigate]);
@@ -107,6 +134,27 @@ const Profile = () => {
           <div className="profile-form-container">
             <h1>Profile</h1>
             <h3>Hii <span style={{color: 'blue', textTransform: 'capitalize'}}>{currentUser?.username}</span>, Update your profile</h3>
+            <div className="profile-form-card">
+              <form>
+                <div className="input-container" style={{ position: 'relative' }}>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={profileData.email} 
+                  placeholder="Enter your email" 
+                  onChange={handleChange}  
+                  style={{ paddingRight: '15px' }} 
+                />
+
+                  <i
+                    className="fas fa-edit edit-icon"
+                    style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
+                    onClick={handleEditEmail}
+                  ></i>
+                </div>
+              </form>
+            </div>
             <div className="profile-form-card">
                 <form>
                     <div className="form-group">
@@ -159,6 +207,7 @@ const Profile = () => {
                     </div>
                     <button type="submit" onClick={handleUpdateProfile}>Update</button>
                 </form>
+               
                 <ToastContainer />
             </div>
           </div>

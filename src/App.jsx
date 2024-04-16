@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import "./style.css"
 import Sidebar from "./components/Sidebar";
 import Profile from "./pages/Profile";
+import Home from "./pages/Home";
 
 
 const Layout = () => {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
       {
         path: "/dashboard",
         element: <Dashboard />,

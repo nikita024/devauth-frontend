@@ -4,18 +4,29 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <ul>
-        <li>
-          <Link to="/dashboard">Home</Link>
+        <Link to="/dashboard">
+          <li>
+            Home
+          </li>
+        </Link>
+       <Link to="/Profile">
+          <li>
+            Profiles
         </li>
-        <li>
-          <Link to="/Profile">Profile</Link>
+        </Link>
+        
+          <Link to="/about">
+          <li>
+            About
         </li>
-        <li>
-          <Link to="/about">About</Link>
+        </Link>
+
+       
+          <Link to="/contact">
+          <li>
+            Contact
         </li>
-        <li>
-          <Link to="/contact">Contact</Link>
-        </li>
+       </Link>
       </ul>
     </div>
   );

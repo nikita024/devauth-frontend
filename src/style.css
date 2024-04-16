@@ -347,3 +347,30 @@ footer span {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+.input-container input[type="email"] {
+  padding-right: 30px;
+}
+.edit-icon {
+  position: absolute;
+  top: 43%;
+  right: 500px;
+  
+} */
+/* input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-container input[type="email"] {
+  padding-right: 30px;
+}
+.edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 5px;
+} */
