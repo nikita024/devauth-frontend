@@ -18,9 +18,9 @@ const Navbar = () => {
     console.log("currentUser: ", currentUser);
     const accessToken = localStorage.getItem("user");
     if (!currentUser && !accessToken) {
-      navigate("/login");
+      logout();
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, logout]);
 
   return (
     <div className="navbar">
