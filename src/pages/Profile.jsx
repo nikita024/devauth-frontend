@@ -1,14 +1,16 @@
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../context/authContext';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatDate } from '../utils';
 import Loader from '../components/Loader';
 
 const Profile = () => {
+  const { profileId } = useParams();
   const navigate = useNavigate(); 
+  const [currentProfileId, setCurrentProfileId] = useState(null);
   const [profileData, setProfileData] = useState({
     phone: '',
     dob: '',
@@ -29,35 +31,48 @@ const Profile = () => {
     setProfileData({ ...profileData, profile_pic: e.target.files[0] });
   };
 
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/profile`);
+        const userProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
+        if (userProfiles.length > 0) {
+          setCurrentProfileId(userProfiles[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+      }
+    };
+
+    fetchProfiles();
+  }, [currentUser?.id]);
+
+  useEffect(() => {
+    console.log(currentProfileId, profileId);
+    if (currentProfileId === null && profileId === 'null') {
+      navigate("/profile/create");
+    }
+
+    if (currentProfileId !== null && profileId !== 'null' && currentProfileId !== profileId) {
+      navigate(`/profile/${currentProfileId}`);
+    }
+  }, [currentProfileId, profileId, navigate]);
+
 
   const handleUpdateProfile = async (e) => {
       e.preventDefault();
-      setLoading(true); 
+      setLoading(false); 
       try {
-
-          if (!profileData.id) {
-              const createResponse = await axios.post('http://localhost:8080/api/profile', profileData, {
-                  headers: {
-                      'x-auth-token': currentUser.token,
-                      'Content-Type': 'multipart/form-data'
-                  }
-              });
-              toast.success('Profile created successfully!');
-              setProfileData(createResponse.data);
-              refreshProfileData();
-              setLoading(false);
+        const updateResponse = await axios.put(`http://localhost:8080/api/profile/${profileData.id}`, profileData, {
+          headers: {
+            'x-auth-token': currentUser.token,
+            'Content-Type': 'multipart/form-data'
           }
-
-          const updateResponse = await axios.put(`http://localhost:8080/api/profile/${profileData.id}`, profileData, {
-              headers: {
-                  'x-auth-token': currentUser.token,
-                  'Content-Type': 'multipart/form-data'
-              }
-          });
-          toast.success('Profile updated successfully!');
-          console.log(updateResponse.data);
-          refreshProfileData();
-          setLoading(false);
+        });
+        toast.success('Profile updated successfully!');
+        console.log(updateResponse.data);
+        refreshProfileData();
+        setLoading(false);
       } catch (error) {
           toast.error(error.response.data);
           console.error('Error updating profile:', error);
@@ -65,10 +80,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && profileId) {
         const fetchProfileData = async () => {
             try {
-              const response = await axios.get(`http://localhost:8080/api/profile/${currentUser.id}`);
+              const response = await axios.get(`http://localhost:8080/api/profile/${profileId}`);
               response.data.dob = formatDate(response.data.dob);
               setProfileData(response.data);
             } catch (error) {
@@ -77,12 +92,12 @@ const Profile = () => {
           };
           fetchProfileData();
         }
-  }, [currentUser]);
+  }, [currentUser, profileId]);
 
   const refreshProfileData = () => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/profile/${currentUser.id}`);
+        const response = await axios.get(`http://localhost:8080/api/profile/${profileId}`);
         response.data.dob = formatDate(response.data.dob);
         setProfileData(response.data);
       } catch (error) {
@@ -91,17 +106,13 @@ const Profile = () => {
     };
     fetchProfileData();
   }
-
-  // const handleEditEmail = () => {
-  //   alert("emailid edit");
-  // }
   useEffect(() => {
     console.log("currentUser: ", currentUser);
     const accessToken = localStorage.getItem("user");
     if (!currentUser && !accessToken) {
       navigate("/login");
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, profileId, navigate]);
 
   return (
     <div className='content-container'>
@@ -114,23 +125,32 @@ const Profile = () => {
 
             <div className="profile-form-card">
                 <form>
-                  <div className="input-container" style={{ position: 'relative' }}>
-                
+                <div className="form-group">
+                        <label htmlFor="email">Email:</label>
+                        <input
+                          type="email" 
+                          id="email" 
+                          name="email" 
+                          value={profileData?.email ? profileData?.email : currentUser?.email} 
+                          placeholder="Enter your email" 
+                          onChange={handleChange} 
+                        />
+                    </div>
+                  {/* <div className="input-container" style={{ position: 'relative' }}>
                     <input 
                       type="email" 
                       id="email" 
                       name="email" 
-                      value={profileData.email} 
+                      value={profileData?.email ? profileData?.email : currentUser?.email} 
                       placeholder="Enter your email" 
                       onChange={handleChange}  
                       style={{ paddingRight: '15px' }} 
                     />
-
                       <i
                         className="fas fa-edit edit-icon"
                         style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
                       ></i>
-                  </div>
+                  </div> */}
                     <div className="form-group">
                         <label htmlFor="phone">Phone:</label>
                         <input

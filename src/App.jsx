@@ -12,20 +12,10 @@ import "./style.css"
 import Sidebar from "./components/Sidebar";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
-
+import Reports from "./pages/Reports";
+import CreateProfile from "./pages/CreateProfile";
 
 const Layout = () => {
-  // const { currentUser } = useContext(AuthContext);
-  // const location = useLocation();
-
-  // // Redirect to login page if not logged in
-  // if (!currentUser) {
-  //   location.pathname === "/login"
-  //   return null;
-  // }
-
-  // console.log("currentUser: ", currentUser);
-
   return (
     <>
       <Navbar />
@@ -50,8 +40,16 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "/profile",
+        path: "/profile/create",
+        element: <CreateProfile />,
+      },
+      {
+        path: "/profile/:profileId",
         element: <Profile />,
+      },
+      {
+        path: "/reports",
+        element: <Reports />,
       },
     ],
   },

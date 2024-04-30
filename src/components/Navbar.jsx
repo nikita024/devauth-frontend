@@ -3,12 +3,30 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from "../assets/react.svg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Navbar = () => {
 
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const { currentUser, logout } = useContext(AuthContext);
+  const [profileId, setProfileId] = useState(null);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/profile`);
+        const userProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
+        if (userProfiles.length > 0) {
+          setProfileId(userProfiles[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+      }
+    };
+
+    fetchProfiles();
+  }, [currentUser?.id]);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -19,8 +37,9 @@ const Navbar = () => {
     const accessToken = localStorage.getItem("user");
     if (!currentUser && !accessToken) {
       logout();
+      navigate("/login");
     }
-  }, [currentUser, logout]);
+  }, [currentUser, logout, navigate]);
 
   return (
     <div className="navbar">
@@ -44,7 +63,7 @@ const Navbar = () => {
             {showDropdown && (
               <div className="dropdown-content">
                 <div className="user-info"> 
-                  <p><Link to="/profile" style={{ textDecoration: 'none', color: '#fff', marginLeft: '10px' }}>Profile</Link></p>
+                  <p><Link to={`/profile/${profileId}`} style={{ textDecoration: 'none', color: '#fff', marginLeft: '10px' }}>Profile</Link></p>
                 </div>
                 <div className="user-info"> 
                   <p><span onClick={logout}>Logout</span></p>

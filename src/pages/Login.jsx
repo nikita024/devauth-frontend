@@ -20,9 +20,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(inputs)
-      alert("Login Successfully!")
-      toast.success("Login Successful")
+     const res = await login(inputs);
+     if (res) {
+      toast.success("Login Successfully");
+      navigate("/dashboard");
+    }
     } catch (err) {
       toast.error(err.response.data)
     }
