@@ -6,7 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateProfile = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
   const navigate = useNavigate();
   const [profileId, setProfileId] = useState(null);
   const [profileData, setProfileData] = useState({
@@ -54,26 +54,27 @@ const CreateProfile = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/profile', profileData, {
         headers: {
-          'x-auth-token': currentUser.token,
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true
       });
       console.log(response.data);
       navigate(`/profile/${response.data.data.id}`);
       toast.success(response.data.message);
     } catch (error) {
-      toast.error('Error creating profile');
-      console.error('Error creating profile:', error);
+      if (error.response && error.response.status === 401) {
+        alert('Authentication error. Please login again.');
+        navigate('/login');
+      } else {
+          alert(error.response.data);
+          console.error('Error updating profile:', error);
+      }
     }
   };
 
   useEffect(() => {
-    console.log("currentUser: ", currentUser);
-    const accessToken = localStorage.getItem("user");
-    if (!currentUser && !accessToken) {
-      navigate("/login");
-    }
-  }, [currentUser, profileId, navigate]);
+    validateToken();
+  }, [validateToken]);
 
   return (
     <div className='content-container'>
@@ -138,6 +139,16 @@ const CreateProfile = () => {
           </div>
         </div>
       </div>
+
+      {showSessionTimeoutModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Session Timeout</h2>
+            <p>Your session has timed out. Please log in again.</p>
+            <button onClick={handleSessionTimeoutModal}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

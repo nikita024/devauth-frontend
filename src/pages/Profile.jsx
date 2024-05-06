@@ -19,9 +19,9 @@ const Profile = () => {
     profile_pic: ''
   });
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, logout, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
@@ -30,7 +30,7 @@ const Profile = () => {
   const handleImageChange = (e) => {
     setProfileData({ ...profileData, profile_pic: e.target.files[0] });
   };
-
+ 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
@@ -65,17 +65,23 @@ const Profile = () => {
       try {
         const updateResponse = await axios.put(`http://localhost:8080/api/profile/${profileData.id}`, profileData, {
           headers: {
-            'x-auth-token': currentUser.token,
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          withCredentials: true
         });
         toast.success('Profile updated successfully!');
         console.log(updateResponse.data);
         refreshProfileData();
         setLoading(false);
       } catch (error) {
-          toast.error(error.response.data);
-          console.error('Error updating profile:', error);
+        if (error.response && error.response.status === 401) {
+          alert('Authentication error. Please login again.');
+          logout();
+        } else {
+            alert(error.response.data);
+            console.error('Error updating profile:', error);
+        }
+        setLoading(false);
       }
   };
 
@@ -106,14 +112,25 @@ const Profile = () => {
     };
     fetchProfileData();
   }
-  useEffect(() => {
-    console.log("currentUser: ", currentUser);
-    const accessToken = localStorage.getItem("user");
-    if (!currentUser && !accessToken) {
-      navigate("/login");
-    }
-  }, [currentUser, profileId, navigate]);
 
+  // useEffect(() => {
+  //   const handleClickOutsideModal = (e) => {
+  //     if (showSessionTimeoutModal && !e.target.closest(".modal-content")) {
+  //       handleSessionTimeoutModal();
+  //     }
+  //   };
+  
+  //   document.addEventListener("click", handleClickOutsideModal);
+  
+  //   return () => {
+  //     document.removeEventListener("click", handleClickOutsideModal);
+  //   };
+  // }, [showSessionTimeoutModal]);
+
+  useEffect(() => {
+    validateToken();
+  }, [validateToken]);
+  
   return (
     <div className='content-container'>
       {loading && <Loader />} 
@@ -136,21 +153,6 @@ const Profile = () => {
                           onChange={handleChange} 
                         />
                     </div>
-                  {/* <div className="input-container" style={{ position: 'relative' }}>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
-                      value={profileData?.email ? profileData?.email : currentUser?.email} 
-                      placeholder="Enter your email" 
-                      onChange={handleChange}  
-                      style={{ paddingRight: '15px' }} 
-                    />
-                      <i
-                        className="fas fa-edit edit-icon"
-                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
-                      ></i>
-                  </div> */}
                     <div className="form-group">
                         <label htmlFor="phone">Phone:</label>
                         <input
@@ -216,7 +218,18 @@ const Profile = () => {
           </div>
         </div>
       )}
+
+    {showSessionTimeoutModal && (
+      <div className="modal">
+        <div className="modal-content">
+          <h2>Session Timeout</h2>
+          <p>Your session has timed out. Please log in again.</p>
+          <button onClick={handleSessionTimeoutModal}>OK</button>
+        </div>
+      </div>
+    )}
     </div>
+    
   )
 }
 

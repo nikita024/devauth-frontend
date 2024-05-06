@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 import Reports from "./pages/Reports";
 import CreateProfile from "./pages/CreateProfile";
+import PageNotFound from "./pages/PageNotFound";
 
 const Layout = () => {
   return (
@@ -50,6 +51,11 @@ const router = createBrowserRouter([
       {
         path: "/reports",
         element: <Reports />,
+      },
+      {
+        // Wildcard route for 404 page
+        path: "*",
+        element: <PageNotFound />,
       },
     ],
   },

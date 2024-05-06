@@ -31,7 +31,6 @@ const Login = () => {
   };
 
   useEffect(() => {
-    console.log("currentUser: ", currentUser);
     const accessToken = localStorage.getItem("user");
     if (accessToken) {
       navigate("/dashboard");

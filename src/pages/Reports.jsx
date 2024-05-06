@@ -8,7 +8,7 @@ import Loader from "../components/Loader";
 
 const Reports = () => {
   const navigate = useNavigate(); 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, logout, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,15 +64,22 @@ const Reports = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.put(`http://localhost:8080/api/admin/users/${selectedUser?.id}`, formData);
+      await axios.put(`http://localhost:8080/api/admin/users/${selectedUser?.id}`, formData, {
+        withCredentials: true
+      });
       setIsModalOpen(false);
       fetchAllUsers();
       setLoading(false);
       toast.success("User updated successfully");
     } catch (err) {
-      console.log(err);
+      if (err.response && err.response.status === 401) {
+        alert('Authentication error. Please login again.');
+        logout();
+      } else {
+          toast.error(err.response.data);
+          console.error('Error updating profile:', err);
+      }
       setLoading(false);
-      toast.error(err.response.data);
     }
   }
 
@@ -80,17 +87,28 @@ const Reports = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:8080/api/admin/users/${selectedUser?.id}`);
+      await axios.delete(`http://localhost:8080/api/admin/users/${selectedUser?.id}`, {
+        withCredentials: true
+      });
       setIsDeleteModalOpen(false);
       fetchAllUsers();
       setLoading(false);
       toast.success("User deleted successfully");
     } catch (err) {
-      console.log(err);
+      if (err.response && err.response.status === 401) {
+        alert('Authentication error. Please login again.');
+        logout();
+      } else {
+          toast.error(err.response.data);
+          console.error('Error updating profile:', err);
+      }
       setLoading(false);
-      toast.error(err.response.data);
     }
   }
+
+  useEffect(() => {
+    validateToken();
+  }, [validateToken]);
 
   return (
     <div className="content-container">
@@ -134,11 +152,11 @@ const Reports = () => {
                 <form onSubmit={handleEditUser}>
                   <div className="form-group">
                     <label htmlFor="username">Username:</label>
-                    <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} />
+                    <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} style={{ width: "95%"}} />
                   </div>
                   <div className="form-group">
                     <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required style={{ width: "95%"}} />
                   </div>
                   {currentUser?.id === selectedUser?.id && currentUser?.is_admin === 1 ? (
                     <div className="form-group checkbox-group">
@@ -194,6 +212,17 @@ const Reports = () => {
           )}
         </div>
       )} 
+
+    {showSessionTimeoutModal && (
+      <div className="modal">
+        <div className="modal-content">
+          <h2>Session Timeout</h2>
+          <p>Your session has timed out. Please log in again.</p>
+          <button onClick={handleSessionTimeoutModal}>OK</button>
+        </div>
+      </div>
+    )}
+
       <ToastContainer />
     </div>
   );

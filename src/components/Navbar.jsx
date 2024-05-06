@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-  const { currentUser, logout } = useContext(AuthContext);
+  const { currentUser, logout, validateToken } = useContext(AuthContext);
   const [profileId, setProfileId] = useState(null);
 
   useEffect(() => {
@@ -35,11 +35,16 @@ const Navbar = () => {
   useEffect(() => {
     console.log("currentUser: ", currentUser);
     const accessToken = localStorage.getItem("user");
-    if (!currentUser && !accessToken) {
+    
+     if (!currentUser && !accessToken) {
       logout();
       navigate("/login");
     }
   }, [currentUser, logout, navigate]);
+
+  useEffect(() => {
+    validateToken();
+  }, [validateToken]);
 
   return (
     <div className="navbar">

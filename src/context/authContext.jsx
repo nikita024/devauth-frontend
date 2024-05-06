@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createContext, useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 
 export const AuthContext = createContext();
 
@@ -7,6 +8,8 @@ export const AuthContexProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null
   );
+  const [showSessionTimeoutModal, setShowSessionTimeoutModal] = useState(false);
+
 
   useEffect(() => {
     const onStorageChange = (e) => {
@@ -14,7 +17,6 @@ export const AuthContexProvider = ({ children }) => {
         setCurrentUser(JSON.parse(e.newValue));
       } else if (e.key === "logout") {
         setCurrentUser(null);
-        
       }
     };
 
@@ -25,18 +27,8 @@ export const AuthContexProvider = ({ children }) => {
     };
   }, []);
 
-  // const isValidToken = (token) => {
-  //   if (!token) return false; // Token is empty or not provided
-
-  //   // Decode the token payload
-  //   const payload = JSON.parse(atob(token.split('.')[1]));
-
-  //   // Check if token is expired by comparing the expiration time with current time
-  //   return payload.exp * 1000 > Date.now(); // Multiplying by 1000 as exp is in seconds
-  // };
-
   const login = async (inputs) => {
-    try {
+    try { 
       const res = await axios.post("http://localhost:8080/api/users/login", inputs, {
         withCredentials: true
       });
@@ -44,13 +36,16 @@ export const AuthContexProvider = ({ children }) => {
       setCurrentUser(res.data);
       return res.data; 
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error:", error);   
       throw error; 
     }
   };
-  
+
   const logout = async () => {
     try {
+      await axios.get("http://localhost:8080/api/users/logout", {
+        withCredentials: true
+      });
       localStorage.removeItem("user");
       localStorage.setItem("logout", Date.now().toString());
       setCurrentUser(null);
@@ -59,17 +54,44 @@ export const AuthContexProvider = ({ children }) => {
     }
   };
 
-  // useEffect(() => {
-  //   // Check token validity when currentUser changes
-  //   if (currentUser && currentUser.token && !isValidToken(currentUser.token)) {
-  //     // Token is invalid, log out user
-  //     logout();
-  //   }
-  // }, [currentUser]);
+const validateToken = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/users/validateToken", {
+        withCredentials: true,
+      });
+      if (res) {
+        setShowSessionTimeoutModal(false);
+        console.log(res);
+      }
+    } catch (error) {
+      console.error("Token validation failed:", error);
+      setShowSessionTimeoutModal(true);
+    }
+  };
+
+  const handleSessionTimeoutModal = () => {
+    setShowSessionTimeoutModal(false);
+    logout();
+  };
+ 
+  useEffect(() => {
+    validateToken();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ 
+      currentUser, 
+      showSessionTimeoutModal, 
+      login, 
+      logout, 
+      validateToken, 
+      handleSessionTimeoutModal
+    }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthContexProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

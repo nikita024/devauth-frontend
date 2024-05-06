@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,7 +11,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const { currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -33,13 +31,7 @@ const Register = () => {
     }
   };
 
- 
- useEffect(() => {
-    console.log("currentUser: ", currentUser);
-    if (currentUser) {
-      navigate("/dashboard");
-    }
-  }, [currentUser, navigate]);
+
   return (
     <div className="register-page">
       <div className="register-card">
