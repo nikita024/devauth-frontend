@@ -6,7 +6,8 @@ body {
   position: fixed;
   display: flex;
   justify-content: space-between;
-  padding: 10px 0px;
+  align-items: center;
+  padding: 4px ;
   width: 100%;
   background-color: #fff;
   color: #000;
@@ -15,8 +16,9 @@ body {
 }
 
 .logo img {
-  width: 50px;
-  margin-left: 30px;
+  width: 90px;
+  padding-top: 5px;
+  margin-left: 50px;
 }
 
 .links {
@@ -98,7 +100,7 @@ body {
 }
 
 .sidebar {
-  background-color: #ffffff;
+  background-color: black;
   width: 200px;
   height: 100%;
   position: fixed;
@@ -112,7 +114,7 @@ body {
 }
 
 .sidebar ul li a:hover {
-  color: #555;
+  color: #000;
 }
 
 .sidebar ul {
@@ -125,26 +127,30 @@ body {
   margin-bottom: 15px;
   padding: 8px 15px;
   cursor: pointer;
+  color: #fff;
 }
 
 .sidebar ul li:hover {
     background-color: rgb(211, 216, 252);
     border-radius: 5px;
+    color: #000;
 }
 
 .sidebar ul li a {
   text-decoration: none;
-  color: #333;
+   color: #333; 
 }
 
 .sidebar ul li a:hover {
-  color: #555;
+  color: #555; 
 }
+
+
 
 .content-container {
   padding: 10px;
   margin-left: 200px;
-  background-color: #fff;
+  background-color: white;
 }
 
 .dashboard-container {
@@ -164,7 +170,7 @@ body {
 .profile-image-container {
   display: flex; 
   justify-content: center; 
-  padding-top: 50px;
+  padding-top: 100px;
   padding-left: 100px; 
 }
 
@@ -175,7 +181,7 @@ body {
 }
 
 .register-page {
-  background-image: url('./assets/image/imagelogin.jpg');
+  background-image: url('./assets/image/bg2.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -185,10 +191,22 @@ body {
 }
 
 .register-card {
-  background-color: #fff;
+  /* background-color:white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+  width: 300px;
+  */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 20px;
+  max-width: 300px;
+  margin: 20px auto;
+  color: white;
   width: 300px;
 }
 
@@ -243,7 +261,7 @@ body {
 }
 
 .register-card span a {
-  color: #007bff;
+  color: #F3D0D7;
   text-decoration: none;
 }
 
@@ -254,11 +272,22 @@ body {
 
 
 .profile-form-card {
-  background-color: #fff;
+  /* background-color:#fff ;
   padding: 20px;
   border-radius: 5px;
-  border: 1px solid #ddd;
   width: 500px;
+  margin: 20px auto;
+  color: #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 20px;
+  width: 500px;
+  margin: 20px auto;
 }
 
 .profile-form-card h1 {
@@ -383,7 +412,6 @@ th {
 }
 
 
-/* Modal styles */
 .modal {
   display: flex;
   justify-content: center;
@@ -398,12 +426,23 @@ th {
 }
 
 .modal-content {
-  background-color: #fff;
+  /* background-color: #92C7CF;
   width: 500px;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+  background-color : #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 20px;
+  width: 500px;
+  margin: 20px auto;
 }
+
+
 
 .close {
   cursor: pointer;
@@ -411,10 +450,10 @@ th {
   top: 0px;
   right: 10px;
   font-size: 50px;
-  color: #fff;
+  color: white;
 }
 
-/* Form styles */
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -436,7 +475,21 @@ th {
   border-color: #007bff;
 }
 
-.btn-container {
+.form-group-horizontal {
+  display: flex;
+  align-items: center;
+}
+
+.profile-preview-container {
+  margin-left: 20px;
+}
+
+.profile-preview,
+.profile-image {
+  border-radius: 50%;
+}   
+
+.btn-container { 
   text-align: right;
   display: flex;
   justify-content: flex-end;
@@ -445,7 +498,7 @@ th {
 
 .btn-container button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: black;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -454,7 +507,7 @@ th {
 }
 
 .btn-container button:hover {
-  background-color: #0056b3;
+  background-color: red;
 }
 
 .btn-container button.disabled {
@@ -472,6 +525,136 @@ th {
   margin-right: 150px; 
   transform: scale(1.5); 
 }
+
+.graph {
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+    border-radius: 5px;
+    display: flex;
+    float:left;
+    margin-left: 2%;
+    padding: 10px;
+  }
+
+  .avatar {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background-color: #92C7CF; 
+    text-align: center;
+    margin-right: 5px;
+  }
+  
+  .count-box {
+    margin-right: 20px; 
+  }
+
+  .count-container {
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .count-box {
+    flex: 1;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 10px;
+    text-align: center;
+    box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .count-box h3 {
+    color: #5F5D9C;
+  }
+
+  .count-box p {
+    font-size: 18px;
+    font-weight: 700;
+    color: #777;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dashboard-content {
+    display: flex;
+  }
+  
+  .pie-chart-container {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .report-box {
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .report-box ul {
+    list-style: none;
+    padding: 0;
+    
+  }
+  
+  .report-button {
+    margin-top: 10px;
+    background-color:#3173C5;
+    color: #eee;
+  }
+
+  .box-container {
+    border: 2px solid #ccc;
+    border-radius: 8px; 
+    padding: 20px; 
+    margin: 20px 0; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .holidays-container {
+    background-color: #E2EAF4;
+    padding:20px;
+  }
+  
+  
+  .holidays-container h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    background-color: #E2EAF4;
+  }
+  
+  .holidays-container ul {
+    list-style-type: none;
+    padding: 10px;
+    background-color: #E2EAF4;
+  }
+  
+  .holidays-container li {
+    font-size: 18px;
+    margin-bottom: 2px;
+    background-color: #E2EAF4;
+  }
+
+  .error {
+    border: 2px solid red;
+  }
+  
+  
+  
+
+  
+  
+  
+  
 
 /* input-container {
   position: relative;

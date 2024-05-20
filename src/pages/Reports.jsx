@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import  { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from "../components/Loader";
+import UserAvatar from "../components/UserAvatar";
 
 const Reports = () => {
   const navigate = useNavigate(); 
@@ -83,6 +84,8 @@ const Reports = () => {
     }
   }
 
+ 
+
   const handleDeleteUser = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -131,7 +134,12 @@ const Reports = () => {
                   {users.map((user) => (
                       <tr key={user.id}>
                           <td>{user.id}</td>
-                          <td>{user.username}</td>
+                          <td>
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                              <UserAvatar username={user.username} profilePicture={user.profilePicture} />
+                              <span style={{ marginLeft: "10px" }}>{user.username}</span>
+                            </div>
+                          </td>
                           <td>{user.email}</td>
                           <td>{user.is_admin ? "Yes" : "No"}</td>
                           <td className="actions">

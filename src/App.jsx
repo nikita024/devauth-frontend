@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         element: <Reports />,
       },
       {
-        // Wildcard route for 404 page
+        
         path: "*",
         element: <PageNotFound />,
       },
@@ -74,6 +74,7 @@ function App() {
     <div className="app">
       <div className="container">
         <RouterProvider router={router} />
+       
       </div>
     </div>
   );

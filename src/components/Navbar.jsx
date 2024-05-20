@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
-import Logo from "../assets/react.svg";
+import Logo from "../assets/image/Nikks.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../style.css";
+import UserAvatar from "./UserAvatar";
 
 const Navbar = () => {
 
@@ -34,9 +36,9 @@ const Navbar = () => {
 
   useEffect(() => {
     console.log("currentUser: ", currentUser);
-    const accessToken = localStorage.getItem("user");
+    const user = localStorage.getItem("user");
     
-     if (!currentUser && !accessToken) {
+     if (!currentUser && !user) {
       logout();
       navigate("/login");
     }
@@ -63,7 +65,11 @@ const Navbar = () => {
         {currentUser ? (
           <div className="dropdown">
             <button className="dropbtn" onClick={toggleDropdown}>
-              Hi, <span style={{color: 'blue', textTransform: 'capitalize'}}>{currentUser?.username}</span> &#9660;
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {/* <span className="avatar">{getFirstLetter()}</span> */}
+                <UserAvatar username={currentUser?.username} profilePicture={currentUser?.profilePicture} width={40} height={40} />
+                <span style={{color: 'blue', textTransform: 'capitalize'}}>{currentUser?.username}</span> &#9660;
+              </div>
             </button>
             {showDropdown && (
               <div className="dropdown-content">

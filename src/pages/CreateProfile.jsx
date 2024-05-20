@@ -16,6 +16,7 @@ const CreateProfile = () => {
     about: '',
     profile_pic: ''
   });
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +24,9 @@ const CreateProfile = () => {
   };
 
   const handleImageChange = (e) => {
-    setProfileData({ ...profileData, profile_pic: e.target.files[0] });
+    const file = e.target.files[0];
+    setProfileData({ ...profileData, profile_pic: file });
+    setPreviewImage(URL.createObjectURL(file));
   };
 
 
@@ -66,7 +69,8 @@ const CreateProfile = () => {
         alert('Authentication error. Please login again.');
         navigate('/login');
       } else {
-          alert(error.response.data);
+          toast.error(error.response.data.error);
+          // alert(error.response.data.error);
           console.error('Error updating profile:', error);
       }
     }
@@ -85,23 +89,46 @@ const CreateProfile = () => {
           <div className="profile-form-card">
             <form>
               <div className="form-group">
-                <label htmlFor="phone">Phone:</label>
+                <label htmlFor="profile_pic">Profile Picture:</label>
+                <div className="form-group-horizontal">
+                  <input
+                    type="file"
+                    id="profile_pic"
+                    name="profile_pic"
+                    onChange={handleImageChange}
+                  />
+                  <div className="profile-preview-container">
+                    {previewImage ? (
+                      <img
+                        src={previewImage}
+                        alt="Selected Profile"
+                        className="profile-preview"
+                        width={100}
+                        height={100}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">Phone:<span className="required">*</span></label>
                 <input
-                  type="tel"
+                  type="number"
                   id="phone"
                   name='phone'
-                  value={profileData.phone}
+                  value={profileData.phone || ""}
                   onChange={handleChange}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="dob">Date of Birth:</label>
+                <label htmlFor="dob">Date of Birth:<span className="required">*</span></label>
                 <input
                   type="date"
                   id="dob"
                   name='dob'
-                  value={profileData.dob}
+                  value={profileData.dob || ""}
                   onChange={handleChange}
+                  max={new Date().toISOString().split('T')[0]}
                 />
               </div>
               <div className="form-group">
@@ -123,22 +150,13 @@ const CreateProfile = () => {
                   rows={5}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="profile_pic">Profile Picture:</label>
-                <input
-                  type="file"
-                  id="profile_pic"
-                  name="profile_pic"
-                  onChange={handleImageChange}
-                />
-              </div>
               <button type="submit" onClick={handleCreateProfile}>Create</button>
             </form>
 
-            <ToastContainer />
           </div>
         </div>
       </div>
+      <ToastContainer />
 
       {showSessionTimeoutModal && (
         <div className="modal">

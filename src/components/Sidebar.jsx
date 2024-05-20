@@ -28,21 +28,21 @@ const Sidebar = () => {
       <ul>
         <Link to="/dashboard">
           <li>
-            Home
+            <i className="fas fa-home"></i> Home
           </li>
         </Link>
-          <Link to={`/profile/${profileId}`}>
+        <Link to={`/profile/${profileId}`}>
+          <li>
+            <i className="fas fa-user"></i> Profile
+          </li>
+        </Link>
+        {currentUser?.is_admin ? (
+          <Link to="/reports">
             <li>
-              Profile
+              <i className="fas fa-chart-bar"></i> Reports
             </li>
           </Link>
-          {currentUser?.is_admin ? (
-            <Link to="/reports">
-              <li>
-                Reports
-              </li>
-            </Link>
-          ) : null}
+        ) : null}
       </ul>
     </div>
   );

@@ -73,6 +73,7 @@ const validateToken = async () => {
     setShowSessionTimeoutModal(false);
     logout();
   };
+
  
   useEffect(() => {
     validateToken();
