@@ -12,7 +12,7 @@ import Footer from "./components/Footer";
 import "./style.css"
 import Sidebar from "./components/Sidebar";
 import Profile from "./pages/Profile";
- import Home from "./pages/Home";
+// import Home from "./pages/Home";
 import Reports from "./pages/Reports";
 import CreateProfile from "./pages/CreateProfile";
 import PageNotFound from "./pages/PageNotFound";
@@ -75,8 +75,7 @@ function App() {
     <div className="app">
       <div className="container">
         <RouterProvider router={router} />
-       
-      </div>
+       </div>
     </div>
   );
 }

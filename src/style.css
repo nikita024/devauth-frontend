@@ -441,8 +441,14 @@ th {
   width: 500px;
   margin: 20px auto;
 }
+.modal button {
+  background-color: lightblue;
+  float:right;
+}
 
-
+.modal button :hover {
+  background-color: black;
+}
 
 .close {
   cursor: pointer;
@@ -610,6 +616,18 @@ th {
     margin-top: 10px;
     background-color:#3173C5;
     color: #eee;
+    padding:10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    float:right;
+
+  }
+  
+  .report-button:hover {
+    background-color: #3A413C;
   }
 
   .box-container {

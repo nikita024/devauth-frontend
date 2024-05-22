@@ -79,20 +79,21 @@ const Profile = () => {
       });
       toast.success('Profile updated successfully!');
       setProfilePic(profileData.profile_pic);
-
       refreshProfileData();
       setLoading(false);
       setPreviewImage(null);
+
     } catch (error) {
       if (error.response && error.response.status === 401) {
         alert('Authentication error. Please login again.');
         logout();
       } else if (error.response && error.response.status === 400) {
         toast.error(error.response.data.error);
+        console.error('Error updating profile:', error);
       } else {
         alert(error.response.data.error);
         console.error('Error updating profile:', error);
-      }
+      } 
       setLoading(false);
     }
   };
@@ -186,6 +187,7 @@ const Profile = () => {
                     value={profileData.dob || ""}
                     onChange={handleChange}
                     max={new Date().toISOString().split('T')[0]}
+                 
                   />
                 </div>
                 <div className="form-group">

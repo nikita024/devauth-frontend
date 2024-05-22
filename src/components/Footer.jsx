@@ -5,7 +5,7 @@ const Footer = () => {
     <footer>
       <img src={Logo} alt="" />
       <span>
-        &copy; {new Date().getFullYear()} <b>Compass</b>.
+        &copy; {new Date().getFullYear()} <b>Nikks</b>.
       </span>
     </footer>
   );
