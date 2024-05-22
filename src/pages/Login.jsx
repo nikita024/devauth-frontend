@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { encodeBase65 } from "../utils";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,7 +22,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-     const res = await login(inputs);
+      const encodedInputs = {
+        ...inputs,
+        // password: btoa(inputs.password)  // Base64 encoding the password
+        password: encodeBase65(inputs.password)  // Base65 encoding the password
+      };
+     const res = await login(encodedInputs);
      if (res) {
       toast.success("Login Successfully");
       navigate("/dashboard");

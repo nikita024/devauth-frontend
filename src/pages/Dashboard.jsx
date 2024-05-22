@@ -116,7 +116,9 @@ const Dashboard = () => {
                   ))}
               </tbody>
           </table>
+          {currentUser?.is_admin ?
             <button className="report-button" onClick={handleReportButtonClick}>View Reports</button>
+          :null}
           </div>
         </div>
        

@@ -2,6 +2,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -11,7 +12,7 @@ import Footer from "./components/Footer";
 import "./style.css"
 import Sidebar from "./components/Sidebar";
 import Profile from "./pages/Profile";
-import Home from "./pages/Home";
+ import Home from "./pages/Home";
 import Reports from "./pages/Reports";
 import CreateProfile from "./pages/CreateProfile";
 import PageNotFound from "./pages/PageNotFound";
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <Navigate to="/dashboard" />,
       },
       {
         path: "/dashboard",

@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 
+
 export const AuthContext = createContext();
 
 export const AuthContexProvider = ({ children }) => {
@@ -27,8 +28,13 @@ export const AuthContexProvider = ({ children }) => {
     };
   }, []);
 
+
+
+
   const login = async (inputs) => {
     try { 
+
+
       const res = await axios.post("http://localhost:8080/api/users/login", inputs, {
         withCredentials: true
       });

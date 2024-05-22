@@ -78,8 +78,9 @@ const Register = () => {
             Already have an account? <Link to="/login">Login</Link>
           </span>
         </form>
-        <ToastContainer />
+        
       </div>
+      <ToastContainer />
     </div>
   );
 };
