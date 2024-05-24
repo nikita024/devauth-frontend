@@ -69,6 +69,10 @@ const Dashboard = () => {
   const handleReportButtonClick = () => {
     navigate("/reports");
   };
+
+  useEffect(() => {
+    console.log("currentUser: ", currentUser);
+  }, [currentUser]);
   
 
   return (
