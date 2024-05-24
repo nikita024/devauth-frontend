@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from "../components/Loader";
 import UserAvatar from "../components/UserAvatar";
+import { Edit24Regular, Delete24Regular  } from "@fluentui/react-icons"
 
 const Reports = () => {
   const navigate = useNavigate(); 
@@ -143,8 +144,30 @@ const Reports = () => {
                           <td>{user.email}</td>
                           <td>{user.is_admin ? "Yes" : "No"}</td>
                           <td className="actions">
-                              <i className="fas fa-edit edit" onClick={() => handleEdit(user)}></i>
-                              <i className="fas fa-trash-alt delete" onClick={() => handleDelete(user)}></i>
+                          <Edit24Regular 
+                            style={{ 
+                              marginRight: "5px", 
+                              verticalAlign: "middle", 
+                              cursor: "pointer", 
+                              backgroundColor: "blue", 
+                              color: "white", 
+                              padding: "5px", 
+                              borderRadius: "5px", 
+                            }} 
+                            onClick={() => handleEdit(user)}
+                          />
+                          <Delete24Regular 
+                            style={{ 
+                              marginRight: "5px", 
+                              verticalAlign: "middle", 
+                              cursor: "pointer", 
+                              backgroundColor: "red", 
+                              color: "white", 
+                              padding: "5px", 
+                              borderRadius: "5px" 
+                            }} 
+                            onClick={() => handleDelete(user)} 
+                          />
                           </td>
                       </tr>
                   ))}

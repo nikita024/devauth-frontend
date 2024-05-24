@@ -10,16 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fluentui/react": "^8.118.4",
+    "@fluentui/react-icons": "^2.0.240",
     "@mui/x-charts": "^7.3.2",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.2",
+    "cropperjs": "^1.6.2",
     "js-base64": "^3.7.7",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-easy-crop": "^5.0.7",
+    "react-image-crop": "^11.0.5",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.22.3",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { formatDate } from '../utils';
 import Loader from '../components/Loader';
 import UserAvatar from '../components/UserAvatar';
+import ImageCropper from '../components/ImageCropper';
+import { v4 as uuidv4 } from 'uuid';
 
 const Profile = () => {
   const { profileId } = useParams();
@@ -21,6 +23,7 @@ const Profile = () => {
   });
   const [profilePic, setProfilePic] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [croppingImage, setCroppingImage] = useState(false);
   const { currentUser, logout, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
@@ -31,9 +34,30 @@ const Profile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProfileData({ ...profileData, profile_pic: file });
     setPreviewImage(URL.createObjectURL(file));
+    setCroppingImage(true);
   };
+
+  const handleCropComplete = async (croppedImageBlob) => {
+    try {
+        // Convert Blob URL to binary data
+        const response = await fetch(croppedImageBlob);
+        const blobData = await response.blob();
+
+        const uniqueId = uuidv4();
+        const fileExtension = croppedImageBlob.split('.').pop();
+        const uniqueFileName = `${uniqueId}.${fileExtension}`;
+
+        // Create new File object from binary data
+        const binaryDataBlob = new File([blobData], uniqueFileName, { type: 'image/jpeg' });
+        setProfileData({ ...profileData, profile_pic: binaryDataBlob });
+        setPreviewImage(URL.createObjectURL(binaryDataBlob));
+        setCroppingImage(false);
+    } catch (error) {
+        console.error('Error handling cropped image:', error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -82,7 +106,6 @@ const Profile = () => {
       refreshProfileData();
       setLoading(false);
       setPreviewImage(null);
-
     } catch (error) {
       if (error.response && error.response.status === 401) {
         alert('Authentication error. Please login again.');
@@ -170,7 +193,7 @@ const Profile = () => {
                 <div className="form-group">
                   <label htmlFor="phone">Phone:<span className="required">*</span></label>
                   <input
-                    type="number"
+                    type="text"
                     id="phone"
                     name='phone'
                     value={profileData.phone || ""}
@@ -229,6 +252,9 @@ const Profile = () => {
             )}
           </div>
         </div>
+      )}
+      {croppingImage && (
+        <ImageCropper imageSrc={previewImage} onCropComplete={handleCropComplete} />
       )}
       <ToastContainer />
       {showSessionTimeoutModal && (

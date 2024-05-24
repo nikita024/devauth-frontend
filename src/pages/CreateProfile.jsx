@@ -4,6 +4,8 @@ import { AuthContext } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ImageCropper from '../components/ImageCropper';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateProfile = () => {
   const { currentUser, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
@@ -17,6 +19,7 @@ const CreateProfile = () => {
     profile_pic: ''
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [croppingImage, setCroppingImage] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,8 +28,29 @@ const CreateProfile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProfileData({ ...profileData, profile_pic: file });
+    // setProfileData({ ...profileData, profile_pic: file });
     setPreviewImage(URL.createObjectURL(file));
+    setCroppingImage(true);
+  };
+
+  const handleCropComplete = async (croppedImageBlob) => {
+    try {
+        // Convert Blob URL to binary data
+        const response = await fetch(croppedImageBlob);
+        const blobData = await response.blob();
+
+        const uniqueId = uuidv4();
+        const fileExtension = croppedImageBlob.split('.').pop();
+        const uniqueFileName = `${uniqueId}.${fileExtension}`;
+
+        // Create new File object from binary data
+        const binaryDataBlob = new File([blobData], uniqueFileName, { type: 'image/jpeg' });
+        setProfileData({ ...profileData, profile_pic: binaryDataBlob });
+        setPreviewImage(URL.createObjectURL(binaryDataBlob));
+        setCroppingImage(false);
+    } catch (error) {
+        console.error('Error handling cropped image:', error);
+    }
   };
 
 
@@ -64,6 +88,7 @@ const CreateProfile = () => {
       console.log(response.data);
       navigate(`/profile/${response.data.data.id}`);
       toast.success(response.data.message);
+      setPreviewImage(null);
     } catch (error) {
       if (error.response && error.response.status === 401) {
         alert('Authentication error. Please login again.');
@@ -156,6 +181,11 @@ const CreateProfile = () => {
           </div>
         </div>
       </div>
+
+      {croppingImage && (
+        <ImageCropper imageSrc={previewImage} onCropComplete={handleCropComplete} />
+      )}
+      
       <ToastContainer />
 
       {showSessionTimeoutModal && (

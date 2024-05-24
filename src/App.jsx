@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
 import CreateProfile from "./pages/CreateProfile";
 import PageNotFound from "./pages/PageNotFound";
+import ContactPage from "./pages/ContactPage";
 
 const Layout = () => {
   return (
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
         path: "*",
         element: <PageNotFound />,
       },
+
+      {
+        path: "/contact",
+        element: <ContactPage />,
+      },
     ],
   },
   {
@@ -68,6 +74,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  
 ]);
 
 function App() {

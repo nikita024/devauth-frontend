@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from "../assets/image/Nikks.png";
+import LogoN from "../assets/image/N.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../style.css";
@@ -30,8 +31,12 @@ const Navbar = () => {
     fetchProfiles();
   }, [currentUser?.id]);
 
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
+  const openDropdown = () => {
+    setShowDropdown(true);
+  };
+
+  const closeDropdown = () => {
+    setShowDropdown(false);
   };
 
   useEffect(() => {
@@ -52,7 +57,8 @@ const Navbar = () => {
     <div className="navbar">
       <div className="logo">
         <Link to="/dashboard">
-        <img src={Logo} alt="" />
+          <img src={LogoN} alt="" />
+          {/* <img src={Logo} alt="" /> */}
         </Link>
       </div>
       <div className="links">
@@ -64,21 +70,24 @@ const Navbar = () => {
         </Link>
         {currentUser ? (
           <div className="dropdown">
-            <button className="dropbtn" onClick={toggleDropdown}>
+            <button className="dropbtn" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                {/* <span className="avatar">{getFirstLetter()}</span> */}
                 <UserAvatar username={currentUser?.username} profilePicture={currentUser?.profilePicture} width={40} height={40} />
                 <span style={{color: 'blue', textTransform: 'capitalize'}}>{currentUser?.username}</span> &#9660;
               </div>
             </button>
             {showDropdown && (
-              <div className="dropdown-content">
-                <div className="user-info"> 
-                  <p><Link to={`/profile/${profileId}`} style={{ textDecoration: 'none', color: '#fff', marginLeft: '10px' }}>Profile</Link></p>
-                </div>
-                <div className="user-info"> 
-                  <p><span onClick={logout}>Logout</span></p>
-                </div>
+              <div className="dropdown-content" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
+                <Link to={`/profile/${profileId}`} >
+                  <li className="dropdown-item">
+                    Profile
+                  </li>
+                </Link>
+                <Link onClick={logout}>
+                  <li className="dropdown-item">
+                    Logout
+                  </li>
+                </Link>
               </div>
             )}
           </div>

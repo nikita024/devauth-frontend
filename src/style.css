@@ -15,8 +15,84 @@ body {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.cropper-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+.cropper-modal h2 {
+  margin-top: 0;
+}
+
+.cropper-modal button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cropper-modal button:hover {
+  background-color: #0056b3;
+}
+
+.modal-crop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-crop {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.modal-crop-content {
+  width: 800px;
+  height: 400px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.crop-container {
+  position: relative;
+}
+
+.cropper-wrapper {
+  width: 200px; /* Set the width of the cropper */
+  height: 200px; /* Set the height of the cropper */
+  overflow: hidden; /* Hide any overflow from the Cropper */
+}
+
+
+
+
+
 .logo img {
-  width: 90px;
+  height: 45px;
   padding-top: 5px;
   margin-left: 50px;
 }
@@ -72,7 +148,7 @@ body {
 .dropbtn {
   background-color: transparent;
   color: #000;
-  padding: 10px;
+  padding: 8px;
   font-size: 16px;
   border: none;
   cursor: pointer;
@@ -83,20 +159,43 @@ body {
   position: absolute;
   background-color: #000;
   min-width: 160px;
+  padding: auto;
+  top: 100%;
+  left: 0;
   z-index: 1;
-  margin-top: 5px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 
 .dropdown-content span {
   display: block;
   color: #fff;
   margin-left: 10px;
+  padding: auto;
   text-decoration: none;
   cursor: pointer;
 }
+.dropbtn:hover .dropdown-content {
+  display: block;
+  padding:10px;
+}
 
 .dropdown-content span:hover {
-  background-color: #000;
+  background-color: grey;
+  padding:8px;
+}
+
+.dropdown-item {
+  list-style-type: none;
+  color: #fff;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: grey;
 }
 
 .sidebar {
@@ -464,6 +563,7 @@ th {
   margin-bottom: 15px;
 }
 
+
 .form-group label {
   display: block;
   margin-bottom: 5px;
@@ -638,33 +738,103 @@ th {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
   }
   
-  .holidays-container {
-    background-color: #E2EAF4;
-    padding:20px;
-  }
-  
-  
-  .holidays-container h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    background-color: #E2EAF4;
-  }
-  
-  .holidays-container ul {
-    list-style-type: none;
-    padding: 10px;
-    background-color: #E2EAF4;
-  }
-  
-  .holidays-container li {
-    font-size: 18px;
-    margin-bottom: 2px;
-    background-color: #E2EAF4;
-  }
+
 
   .error {
     border: 2px solid red;
   }
+
+
+
+  .contact-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    border-radius: 5px;
+    /* box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2); */
+    max-width: 600px;
+    
+   
+  }
+  
+  .contact-container h2 {
+    text-align: center;
+  }
+  
+  .contact-container form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+    flex-direction: column;
+    align-items: center;
+    padding:10px;
+    margin-top: auto;
+    
+  
+   
+  }
+  
+  .contact-container form > div {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    
+  }
+
+  .contact-container h2 {
+    text-align: center;
+  }
+  
+  .contact-container label {
+    font-weight: bold;
+  }
+  
+  .contact-container input,
+  .contact-container textarea {
+    width: 100%;
+    padding: 8px ;
+    margin-top: 3px; 
+    /* margin-bottom: 15px;  */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+
+    
+  }
+
+  /* .contact-container form > div {
+    margin-bottom: 15px;
+  } */
+  
+  .contact-form-container2 {
+    margin-top: 100px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);;
+  }
+  .contact-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .contact-container p {
+    text-align: center;
+    font-weight: bold;
+    
+  }
+  
+  
+
+
   
   
   

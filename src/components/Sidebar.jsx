@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
+import { Home24Regular,ArrowTrending24Regular,BookCoins24Filled} from "@fluentui/react-icons";
 
 const Sidebar = () => {
   const { currentUser } = useContext(AuthContext);
@@ -28,18 +29,18 @@ const Sidebar = () => {
       <ul>
         <Link to="/dashboard">
           <li>
-            <i className="fas fa-home"></i> Home
+          <Home24Regular  style={{marginRight: "5px",verticalAlign: "middle"}}/> Home
           </li>
         </Link>
         <Link to={`/profile/${profileId}`}>
           <li>
-            <i className="fas fa-user"></i> Profile
+          < BookCoins24Filled style={{marginRight: "5px",verticalAlign: "middle"}}/> Profile
           </li>
         </Link>
         {currentUser?.is_admin ? (
           <Link to="/reports">
             <li>
-              <i className="fas fa-chart-bar"></i> Reports
+            < ArrowTrending24Regular style={{marginRight: "5px",verticalAlign: "middle"}}/> Report
             </li>
           </Link>
         ) : null}
