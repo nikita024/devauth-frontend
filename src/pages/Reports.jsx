@@ -1,35 +1,78 @@
-import  { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/authContext";
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Loader from "../components/Loader";
 import UserAvatar from "../components/UserAvatar";
+import 'react-toastify/dist/ReactToastify.css';
 import { Edit24Regular, Delete24Regular  } from "@fluentui/react-icons"
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUser, editUser, fetchAllUsers } from "../redux/slices/userSlice";
+import { logout, validateToken, handleSessionTimeoutModal } from "../redux/slices/authSlice";
 
 const Reports = () => {
+  
   const navigate = useNavigate(); 
-  const { currentUser, logout, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
-  const [users, setUsers] = useState([]);
+  const dispatch = useDispatch();
+
+  const { currentUser, showSessionTimeoutModal } = useSelector((state) => state.auth);
+  const { users, loading } = useSelector((state) => state.users);
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ username: "", email: "", is_admin: 0 });
 
-  const fetchAllUsers = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`http://localhost:8080/api/users`);
-      const data = res.data;
-      setUsers(data);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+  const handleEdit = (user) => {
+    setIsModalOpen(true);
+    setSelectedUser(user);
+    setFormData({ username: user.username, email: user.email, is_admin: user.is_admin ? 1 : 0 }); 
   }
+
+  const handleDelete = (user) => {
+    setIsDeleteModalOpen(true);
+    setSelectedUser(user)
+  }
+
+  const handleChange = (e) => {
+    const value = e.target.type === "checkbox" ? e.target.checked ? 1 : 0 : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
+  }
+
+  const handleEditUser = async (e) => {
+    e.preventDefault();
+    const result = await dispatch(editUser({ id: selectedUser?.id, formData }));
+  
+    if (result.success) {
+      setIsModalOpen(false);
+      toast.success("User updated successfully");
+      dispatch(fetchAllUsers());
+    } else {
+      if (result.error.response && result.error.response.status === 401) {
+        alert('Authentication error. Please login again.');
+        dispatch(logout());
+      } else {
+        toast.error(result.error.response.data);
+      }
+    }
+  };
+
+  const handleDeleteUser = async (e) => {
+    e.preventDefault();
+    const result = await dispatch(deleteUser(selectedUser.id));
+      
+    if (result.success) {
+      setIsDeleteModalOpen(false);
+      toast.success("User deleted successfully");
+      dispatch(fetchAllUsers());
+    } else {
+      if (result.error.response && result.error.response.status === 401) {
+        alert('Authentication error. Please login again.');
+        dispatch(logout());
+      } else {
+        toast.error(result.error.response.data);
+      }
+    }
+  };
 
   useEffect(() => {
     const accessToken = localStorage.getItem("user");
@@ -41,78 +84,9 @@ const Reports = () => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    fetchAllUsers();
-  }, []);
-
-  const handleEdit = (user) => {
-    console.log("Edit clicked");
-    setSelectedUser(user);
-    setFormData({ username: user.username, email: user.email, is_admin: user.is_admin ? 1 : 0 }); 
-    setIsModalOpen(true);
-  }
-
-  const handleDelete = (user) => {
-    console.log("Delete clicked");
-    setSelectedUser(user)
-    setIsDeleteModalOpen(true);
-  }
-
-  const handleChange = (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked ? 1 : 0 : e.target.value;
-    setFormData({ ...formData, [e.target.name]: value });
-  }
-
-  const handleEditUser = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await axios.put(`http://localhost:8080/api/admin/users/${selectedUser?.id}`, formData, {
-        withCredentials: true
-      });
-      setIsModalOpen(false);
-      fetchAllUsers();
-      setLoading(false);
-      toast.success("User updated successfully");
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        alert('Authentication error. Please login again.');
-        logout();
-      } else {
-          toast.error(err.response.data);
-          console.error('Error updating profile:', err);
-      }
-      setLoading(false);
-    }
-  }
-
- 
-
-  const handleDeleteUser = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:8080/api/admin/users/${selectedUser?.id}`, {
-        withCredentials: true
-      });
-      setIsDeleteModalOpen(false);
-      fetchAllUsers();
-      setLoading(false);
-      toast.success("User deleted successfully");
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        alert('Authentication error. Please login again.');
-        logout();
-      } else {
-          toast.error(err.response.data);
-          console.error('Error updating profile:', err);
-      }
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    dispatch(fetchAllUsers());
+    dispatch(validateToken());
+  }, [dispatch]);
 
   return (
     <div className="content-container">
@@ -249,7 +223,7 @@ const Reports = () => {
         <div className="modal-content">
           <h2>Session Timeout</h2>
           <p>Your session has timed out. Please log in again.</p>
-          <button onClick={handleSessionTimeoutModal}>OK</button>
+          <button onClick={() => dispatch(handleSessionTimeoutModal())}>OK</button>
         </div>
       </div>
     )}

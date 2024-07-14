@@ -1,28 +1,22 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
-import axios from "axios";
 import { Home24Regular,ArrowTrending24Regular,BookCoins24Filled} from "@fluentui/react-icons";
+import { fetchProfiles } from "../redux/slices/profileSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Sidebar = () => {
-  const { currentUser } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/profile`);
-        const userProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
-        if (userProfiles.length > 0) {
-          setProfileId(userProfiles[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching profiles:', error);
-      }
+    const fetchProfileDataAndSetId = async () => {
+      const profiles = await dispatch(fetchProfiles());
+      setProfileId(profiles?.payload[0]?.id);
     };
-
-    fetchProfiles();
-  }, [currentUser?.id]);
+    
+    fetchProfileDataAndSetId();
+  }, [currentUser?.id, dispatch]);
 
   return (
     <div className="sidebar">

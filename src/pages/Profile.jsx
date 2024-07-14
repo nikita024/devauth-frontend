@@ -1,150 +1,103 @@
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/authContext';
-import axios from 'axios';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { formatDate } from '../utils';
+import { fetchProfiles, fetchProfileData, updateProfile, setPreviewImage, setCroppingImage, setProfilePic, setProfileData } from '../redux/slices/profileSlice';
 import Loader from '../components/Loader';
 import UserAvatar from '../components/UserAvatar';
 import ImageCropper from '../components/ImageCropper';
 import { v4 as uuidv4 } from 'uuid';
+import { handleSessionTimeoutModal, logout, validateToken } from '../redux/slices/authSlice';
 
 const Profile = () => {
+
   const { profileId } = useParams();
   const navigate = useNavigate();
-  const [currentProfileId, setCurrentProfileId] = useState(null);
-  const [profileData, setProfileData] = useState({
-    phone: '',
-    dob: '',
-    city: '',
-    about: '',
-    profile_pic: ''
-  });
-  const [profilePic, setProfilePic] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [croppingImage, setCroppingImage] = useState(false);
-  const { currentUser, logout, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
+
+  const { currentUser, showSessionTimeoutModal } = useSelector((state) => state.auth);
+  const { profileData, profilePic, previewImage, croppingImage, loading } = useSelector((state) => state.profile);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData({ ...profileData, [name]: value });
+    dispatch(setProfileData({ ...profileData, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setPreviewImage(URL.createObjectURL(file));
-    setCroppingImage(true);
+    dispatch(setPreviewImage(URL.createObjectURL(file)));
+    dispatch(setCroppingImage(true));
   };
 
   const handleCropComplete = async (croppedImageBlob) => {
     try {
-        // Convert Blob URL to binary data
-        const response = await fetch(croppedImageBlob);
-        const blobData = await response.blob();
+      const response = await fetch(croppedImageBlob);
+      const blobData = await response.blob();
 
-        const uniqueId = uuidv4();
-        const fileExtension = croppedImageBlob.split('.').pop();
-        const uniqueFileName = `${uniqueId}.${fileExtension}`;
+      const uniqueId = uuidv4();
+      const fileExtension = croppedImageBlob.split('.').pop();
+      const uniqueFileName = `${uniqueId}.${fileExtension}`;
 
-        // Create new File object from binary data
-        const binaryDataBlob = new File([blobData], uniqueFileName, { type: 'image/jpeg' });
-        setProfileData({ ...profileData, profile_pic: binaryDataBlob });
-        setPreviewImage(URL.createObjectURL(binaryDataBlob));
-        setCroppingImage(false);
+      const binaryDataBlob = new File([blobData], uniqueFileName, { type: 'image/jpeg' });
+      dispatch(setProfileData({ ...profileData, profile_pic: binaryDataBlob }));
+      dispatch(setPreviewImage(URL.createObjectURL(binaryDataBlob)));
+      dispatch(setCroppingImage(false));
     } catch (error) {
-        console.error('Error handling cropped image:', error);
+      console.error('Error handling cropped image:', error);
     }
   };
 
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/profile`);
-        const userProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
-        if (userProfiles.length > 0) {
-          setCurrentProfileId(userProfiles[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching profiles:', error);
-      }
-    };
-
-    fetchProfiles();
-  }, [currentUser?.id]);
-
-  useEffect(() => {
-    if (currentProfileId === null && profileId === 'null') {
-      navigate("/profile/create");
+  const handleCropCancel = () => {
+    dispatch(setCroppingImage(false));
+    dispatch(setPreviewImage(null));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
     }
-
-    if (currentProfileId !== null && profileId !== 'null' && currentProfileId !== profileId) {
-      navigate(`/profile/${currentProfileId}`);
-    }
-  }, [currentProfileId, profileId, navigate]);
+  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    const formData = new FormData();
-    for (const key in profileData) {
-      formData.append(key, profileData[key]);
-    }
-
-    try {
-      const updateResponse = await axios.put(`http://localhost:8080/api/profile/${profileId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        withCredentials: true
-      });
-      toast.success('Profile updated successfully!');
-      setProfilePic(profileData.profile_pic);
-      refreshProfileData();
-      setLoading(false);
-      setPreviewImage(null);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
+    const profileUpdateData = { profileId, profileData };
+    const resultAction = await dispatch(updateProfile(profileUpdateData));
+    console.log(resultAction);
+    if (resultAction.success) {
+      alert('Profile Updated Successfully');
+      // toast.success('Profile updated successfully');
+      dispatch(setProfilePic(profileData.profile_pic));
+      dispatch(fetchProfileData(profileId));
+    } else {
+      toast.error(resultAction.payload || 'Error updating profile');
+      if (resultAction.payload === 'Authentication error. Please login again.') {
         alert('Authentication error. Please login again.');
-        logout();
-      } else if (error.response && error.response.status === 400) {
-        toast.error(error.response.data.error);
-        console.error('Error updating profile:', error);
-      } else {
-        alert(error.response.data.error);
-        console.error('Error updating profile:', error);
-      } 
-      setLoading(false);
+        dispatch(logout());
+      }
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchProfiles());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!profileData.id) {
+      navigate("/profile/create");
+    } else {
+      navigate(`/profile/${profileData.id}`);
+    }
+  }, [profileData.id, navigate]);
 
   useEffect(() => {
     if (currentUser && profileId) {
-      fetchProfileData();
+      dispatch(fetchProfileData(profileId));
     }
-  }, [currentUser, profileId]);
-
-  const fetchProfileData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/profile/${profileId}`);
-      response.data.dob = formatDate(response.data.dob);
-      setProfileData(response.data);
-      setProfilePic(response.data.profile_pic);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
-
-  const refreshProfileData = () => {
-    fetchProfileData();
-  };
+  }, [currentUser, profileId, dispatch]);
 
   useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    dispatch(validateToken());
+  }, [ dispatch ]);
 
   return (
     <div className='content-container'>
@@ -176,6 +129,7 @@ const Profile = () => {
                       id="profile_pic"
                       name="profile_pic"
                       onChange={handleImageChange}
+                      ref={fileInputRef}
                     />
                     <div className="profile-preview-container">
                       {previewImage ? (
@@ -210,7 +164,6 @@ const Profile = () => {
                     value={profileData.dob || ""}
                     onChange={handleChange}
                     max={new Date().toISOString().split('T')[0]}
-                 
                   />
                 </div>
                 <div className="form-group">
@@ -254,7 +207,11 @@ const Profile = () => {
         </div>
       )}
       {croppingImage && (
-        <ImageCropper imageSrc={previewImage} onCropComplete={handleCropComplete} />
+        <ImageCropper 
+          previewImage={previewImage} 
+          onCropComplete={handleCropComplete} 
+          handleCropCancel={handleCropCancel}
+        />
       )}
       <ToastContainer />
       {showSessionTimeoutModal && (
@@ -262,7 +219,7 @@ const Profile = () => {
           <div className="modal-content">
             <h2>Session Timeout</h2>
             <p>Your session has timed out. Please log in again.</p>
-            <button onClick={handleSessionTimeoutModal}>OK</button>
+            <button onClick={() => dispatch(handleSessionTimeoutModal())}>OK</button>
           </div>
         </div>
       )}
@@ -271,3 +228,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
+

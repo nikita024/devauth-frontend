@@ -1,33 +1,28 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, setRegisterFormInput } from "../redux/slices/userSlice";
 
 const Register = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [inputs, setInputs] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const registerForm = useSelector((state) => state.users.registerForm);
 
   const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    dispatch(setRegisterFormInput({ name: e.target.name, value: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:8080/api/users/register", inputs);
-
-      if (res.data) {
-        alert("Register Successfully!");
-        toast.success("Register Successfully!");
-        navigate("/login");
-      }
-    } catch (err) {
-      toast.error(err.response.data)
+    const result = await dispatch(registerUser());
+    if (result.success) {
+      alert("Register Successfully!");
+      toast.success("Register Successfully!");
+      navigate("/login");
+    } else {
+      console.log(result.error);
+      toast.error(result.error.response.data);
     }
   };
 
@@ -45,7 +40,7 @@ const Register = () => {
               id="username"
               placeholder="Enter your username"
               name="username"
-              value={inputs.username}
+              value={registerForm.username}
               onChange={handleChange}
             />
           </div>
@@ -57,7 +52,7 @@ const Register = () => {
               id="email"
               placeholder="Enter your email"
               name="email"
-              value={inputs.email}
+              value={registerForm.email}
               onChange={handleChange}
             />
           </div>
@@ -69,7 +64,7 @@ const Register = () => {
               id="password"
               placeholder="Enter your password"
               name="password"
-              value={inputs.password}
+              value={registerForm.password}
               onChange={handleChange}
             />
           </div>
