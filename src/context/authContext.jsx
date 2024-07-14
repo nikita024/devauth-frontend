@@ -42,7 +42,7 @@ export const AuthContexProvider = ({ children }) => {
       setCurrentUser(res.data);
       return res.data; 
     } catch (error) {
-      console.error("Login error:", error);   
+      console.error("Login error:", error); 
       throw error; 
     }
   };

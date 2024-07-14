@@ -1,14 +1,15 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../context/authContext";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { handleSessionTimeoutModal, validateToken } from "../redux/slices/authSlice";
 
 const PageNotFound = () => {
 
+  const dispatch = useDispatch();
   const navigate = useNavigate(); 
-  const { currentUser, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
+  const { currentUser, showSessionTimeoutModal } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    console.log("currentUser: ", currentUser);
     const accessToken = localStorage.getItem("user");
     if (!currentUser && !accessToken) {
       navigate("/login");
@@ -16,8 +17,8 @@ const PageNotFound = () => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    dispatch(validateToken());
+  }, [dispatch]);
 
   return (
     <div className="content-container">
@@ -29,7 +30,7 @@ const PageNotFound = () => {
           <div className="modal-content">
             <h2>Session Timeout</h2>
             <p>Your session has timed out. Please log in again.</p>
-            <button onClick={handleSessionTimeoutModal}>OK</button>
+            <button onClick={() => dispatch(handleSessionTimeoutModal())}>OK</button>
           </div>
         </div>
       )}

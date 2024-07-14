@@ -1,74 +1,32 @@
-import  { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/authContext";
+import  { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Piechart from "./Piechart";
-import axios from "axios";
 import HolidaysList from "./HolidaysList";
-
-const CountBox = ({ label, count }) => {
-  return (
-    <div className="count-box">
-      <h2>{label}</h2>
-      <p>{count}</p>
-    </div>
-  );
-};
+import CountBox from "../components/CountBox";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfiles } from "../redux/slices/profileSlice";
+import { fetchAllUsers } from "../redux/slices/userSlice";
+import { handleSessionTimeoutModal, validateToken } from "../redux/slices/authSlice";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { currentUser, validateToken, showSessionTimeoutModal, handleSessionTimeoutModal } = useContext(AuthContext);
-  const [users, setUsers] = useState([]);
-  const [usersCount, setUsersCount] = useState(0);
-  const [adminCount, setAdminCount] = useState(0);
-  const [profiles, setProfiles] = useState([]);
-  const [profilesCount, setProfilesCount] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); 
+  const { currentUser, showSessionTimeoutModal } = useSelector((state) => state.auth);
+  const { users, usersCount, adminCount } = useSelector((state) => state.users);
+  const { profilesCount } = useSelector((state) => state.profile);
 
   useEffect(() => {
-    console.log("currentUser: ", currentUser);
+    dispatch(fetchProfiles());
+    dispatch(fetchAllUsers());
+    dispatch(validateToken());
+  }, [ dispatch ]);
+
+  useEffect(() => {
     const accessToken = localStorage.getItem("user");
     if (!currentUser && !accessToken) {
       navigate("/login");
     }
   }, [currentUser, navigate]);
-
-  const fetchAllUsers = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8080/api/users`);
-      const data = res.data;
-      console.log(data);
-      setUsers(data);
-      setUsersCount(data.length);
-      const adminUsers = data.filter((user) => user.is_admin === 1);
-      console.log(adminUsers);
-      setAdminCount(adminUsers.length);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllUsers();
-  }, []);
-
-  const fetchProfiles = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/profile`);
-      const data = response.data;
-      console.log(data);
-      setProfiles(data);
-      setProfilesCount(data.length);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfiles();
-  }, []);
-
-  useEffect(() => {
-    validateToken();
-  }, [validateToken]);
 
   return (
     <div className="content-container">
@@ -101,7 +59,7 @@ const Home = () => {
           <div className="modal-content">
             <h2>Session Timeout</h2>
             <p>Your session has timed out. Please log in again.</p>
-            <button onClick={handleSessionTimeoutModal}>OK</button>
+            <button onClick={() => dispatch(handleSessionTimeoutModal())}>OK</button>
           </div>
         </div>
       )}

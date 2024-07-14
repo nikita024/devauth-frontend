@@ -65,7 +65,7 @@ body {
 
 .modal-crop-content {
   width: 800px;
-  height: 400px;
+  height: 420px;
   border: 1px solid #ccc;
   overflow: hidden;
 }
@@ -82,14 +82,40 @@ body {
 }
 
 .cropper-wrapper {
-  width: 200px; /* Set the width of the cropper */
-  height: 200px; /* Set the height of the cropper */
-  overflow: hidden; /* Hide any overflow from the Cropper */
+  width: 200px; 
+  height: 280px; 
+  overflow: hidden; 
 }
 
+.crop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 10px 0px 10px;
+}
 
+.dismiss-button {
+  margin-left: 10px;
+  float: left;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-
+.crop-button {
+  margin-top: 15px;
+  margin-right: 10px;
+  float: right;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 .logo img {
   height: 45px;
@@ -736,6 +762,7 @@ th {
     padding: 20px; 
     margin: 20px 0; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+
   }
   
 
@@ -752,7 +779,7 @@ th {
     padding: 10px;
     /* border: 1px solid #ccc; */
     border-radius: 5px;
-    /* box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2); */
+     /* box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);  */
     max-width: 600px;
     
    

@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { encodeBase65 } from "../utils";
-
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/slices/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const currentUser = useSelector(state => state.auth.currentUser);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
-  const { login, currentUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -24,10 +25,10 @@ const Login = () => {
     try {
       const encodedInputs = {
         ...inputs,
-        // password: btoa(inputs.password)  // Base64 encoding the password
-        password: encodeBase65(inputs.password)  // Base65 encoding the password
+        
+        password: encodeBase65(inputs.password)  
       };
-     const res = await login(encodedInputs);
+     const res = await dispatch(login(encodedInputs));
      if (res) {
       toast.success("Login Successfully");
       navigate("/dashboard");

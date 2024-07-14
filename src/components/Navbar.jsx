@@ -1,35 +1,29 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
-import Logo from "../assets/image/Nikks.png";
 import LogoN from "../assets/image/N.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../style.css";
 import UserAvatar from "./UserAvatar";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfiles } from "../redux/slices/profileSlice";
+import { logout, validateToken } from "../redux/slices/authSlice";
 
 const Navbar = () => {
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-  const { currentUser, logout, validateToken } = useContext(AuthContext);
+  const { currentUser } = useSelector((state) => state.auth);
   const [profileId, setProfileId] = useState(null);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/profile`);
-        const userProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
-        if (userProfiles.length > 0) {
-          setProfileId(userProfiles[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching profiles:', error);
-      }
+    const fetchProfileDataAndSetId = async () => {
+      const profiles = await dispatch(fetchProfiles());
+      setProfileId(profiles?.payload[0]?.id);
     };
-
-    fetchProfiles();
-  }, [currentUser?.id]);
+    
+    fetchProfileDataAndSetId();
+  }, [currentUser?.id, dispatch]);
 
   const openDropdown = () => {
     setShowDropdown(true);
@@ -44,21 +38,20 @@ const Navbar = () => {
     const user = localStorage.getItem("user");
     
      if (!currentUser && !user) {
-      logout();
+      dispatch(logout());
       navigate("/login");
     }
-  }, [currentUser, logout, navigate]);
+  }, [currentUser, navigate, dispatch]);
 
   useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    dispatch(validateToken());
+  }, [dispatch]);
 
   return (
     <div className="navbar">
       <div className="logo">
         <Link to="/dashboard">
           <img src={LogoN} alt="" />
-          {/* <img src={Logo} alt="" /> */}
         </Link>
       </div>
       <div className="links">
@@ -70,12 +63,12 @@ const Navbar = () => {
         </Link>
         {currentUser ? (
           <div className="dropdown">
-            <button className="dropbtn" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
+            <div className="dropbtn" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <UserAvatar username={currentUser?.username} profilePicture={currentUser?.profilePicture} width={40} height={40} />
                 <span style={{color: 'blue', textTransform: 'capitalize'}}>{currentUser?.username}</span> &#9660;
               </div>
-            </button>
+            </div>
             {showDropdown && (
               <div className="dropdown-content" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
                 <Link to={`/profile/${profileId}`} >
@@ -83,7 +76,7 @@ const Navbar = () => {
                     Profile
                   </li>
                 </Link>
-                <Link onClick={logout}>
+                <Link onClick={() => dispatch(logout())}>
                   <li className="dropdown-item">
                     Logout
                   </li>
