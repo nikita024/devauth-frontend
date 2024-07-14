@@ -1,6 +1,7 @@
 // redux/slices/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { apiURL } from '../../constants';
 
 const initialState = {
   currentUser: JSON.parse(localStorage.getItem("user")) || null,
@@ -46,7 +47,7 @@ export const {
 export const login = (inputs) => async (dispatch) => {
   dispatch(authPending());
   try {
-    const res = await axios.post("http://localhost:8080/api/users/login", inputs, {
+    const res = await axios.post(`${apiURL}users/login`, inputs, {
       withCredentials: true,
     });
     localStorage.setItem("user", JSON.stringify(res.data));
@@ -59,7 +60,7 @@ export const login = (inputs) => async (dispatch) => {
 
 export const logout = () => async (dispatch) => {
   try {
-    await axios.get("http://localhost:8080/api/users/logout", {
+    await axios.get(`${apiURL}users/logout`, {
       withCredentials: true,
     });
     localStorage.removeItem("user");
@@ -72,7 +73,7 @@ export const logout = () => async (dispatch) => {
 
 export const validateToken = () => async (dispatch) => {
   try {
-    const res = await axios.get("http://localhost:8080/api/users/validateToken", {
+    const res = await axios.get(`${apiURL}users/validateToken`, {
       withCredentials: true,
     });
     if (res) {

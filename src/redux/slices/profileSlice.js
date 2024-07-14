@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { formatDate } from '../../utils';
+import { apiURL } from '../../constants';
 
 
 const profileSlice = createSlice({
@@ -96,7 +97,7 @@ export const fetchProfiles = () => async (dispatch, getState) => {
   dispatch(fetchProfilesPending());
   try {
     const { currentUser } = getState().auth;
-    const response = await axios.get('http://localhost:8080/api/profile');
+    const response = await axios.get(`${apiURL}profile`);
     dispatch(setProfilesCount(response.data.length));
     const filteredProfiles = response.data.filter(profile => profile.uid === currentUser?.id);
     dispatch(fetchProfilesFulfilled(filteredProfiles));
@@ -109,7 +110,7 @@ export const fetchProfiles = () => async (dispatch, getState) => {
 export const fetchProfileData = (profileId) => async (dispatch) => {
   dispatch(fetchProfileDataPending());
   try {
-    const response = await axios.get(`http://localhost:8080/api/profile/${profileId}`);
+    const response = await axios.get(`${apiURL}profile/${profileId}`);
     response.data.dob = formatDate(response.data.dob);
     dispatch(fetchProfileDataFulfilled(response.data));
   } catch (error) {
@@ -125,7 +126,7 @@ export const createProfile = ({ profileData }) => async (dispatch) => {
       formData.append(key, profileData[key]);
     }
 
-    const response = await axios.post('http://localhost:8080/api/profile', formData, {
+    const response = await axios.post(`${apiURL}profile`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -156,7 +157,7 @@ export const updateProfile = ({ profileId, profileData }) => async (dispatch) =>
       formData.append(key, profileData[key]);
     }
 
-    const response = await axios.put(`http://localhost:8080/api/profile/${profileId}`, formData, {
+    const response = await axios.put(`${apiURL}profile/${profileId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

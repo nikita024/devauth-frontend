@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createContext, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
+import { apiURL } from "../constants";
 
 
 export const AuthContext = createContext();
@@ -35,7 +36,7 @@ export const AuthContexProvider = ({ children }) => {
     try { 
 
 
-      const res = await axios.post("http://localhost:8080/api/users/login", inputs, {
+      const res = await axios.post(`${apiURL}users/login`, inputs, {
         withCredentials: true
       });
       localStorage.setItem("user", JSON.stringify(res.data));
@@ -49,7 +50,7 @@ export const AuthContexProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.get("http://localhost:8080/api/users/logout", {
+      await axios.get(`${apiURL}users/logout`, {
         withCredentials: true
       });
       localStorage.removeItem("user");
@@ -62,7 +63,7 @@ export const AuthContexProvider = ({ children }) => {
 
 const validateToken = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/users/validateToken", {
+      const res = await axios.get(`${apiURL}users/validateToken`, {
         withCredentials: true,
       });
       if (res) {

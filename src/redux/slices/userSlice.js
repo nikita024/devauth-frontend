@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { apiURL } from '../../constants';
 
 const initialState = {
   users: [],
@@ -86,7 +87,7 @@ const userSlice = createSlice({
 export const fetchAllUsers = () => async (dispatch) => {
   dispatch(fetchAllUsersPending());
   try {
-    const response = await axios.get('http://localhost:8080/api/users');
+    const response = await axios.get(`${apiURL}users`);
     dispatch(fetchAllUsersFulfilled(response.data));
     dispatch(setUsersCount(response.data.length));
     const adminUsers = response.data.filter((user) => user.is_admin === 1);
@@ -99,7 +100,7 @@ export const fetchAllUsers = () => async (dispatch) => {
 // export const registerUser = (formData) => async (dispatch) => {
 //   dispatch(registerUserPending());
 //   try {
-//     await axios.post("http://localhost:8080/api/users/register", formData);
+//     await axios.post(`${apiURL}users/register`, formData);
 //     dispatch(registerUserFulfilled());
 //     return { success: true };
 //   } catch (error) {
@@ -111,7 +112,7 @@ export const registerUser = () => async (dispatch, getState) => {
   const formData = getState().users.registerForm;
   dispatch(registerUserPending());
   try {
-    const response = await axios.post("http://localhost:8080/api/users/register", formData);
+    const response = await axios.post(`${apiURL}users/register`, formData);
     dispatch(registerUserFulfilled(response.data));
     dispatch(resetRegisterForm());
     return { success: true };
@@ -124,7 +125,7 @@ export const registerUser = () => async (dispatch, getState) => {
 export const editUser = ({ id, formData }) => async (dispatch) => {
   dispatch(editUserPending());
   try {
-    const response = await axios.put(`http://localhost:8080/api/admin/users/${id}`, formData, {
+    const response = await axios.put(`${apiURL}admin/users/${id}`, formData, {
       withCredentials: true,
     });
     dispatch(editUserFulfilled(response.data));
@@ -139,7 +140,7 @@ export const editUser = ({ id, formData }) => async (dispatch) => {
 export const deleteUser = (id) => async (dispatch) => {
   dispatch(deleteUserPending());
   try {
-    await axios.delete(`http://localhost:8080/api/admin/users/${id}`, {
+    await axios.delete(`${apiURL}admin/users/${id}`, {
       withCredentials: true,
     });
     dispatch(deleteUserFulfilled(id));
