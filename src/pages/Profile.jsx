@@ -9,6 +9,7 @@ import UserAvatar from '../components/UserAvatar';
 import ImageCropper from '../components/ImageCropper';
 import { v4 as uuidv4 } from 'uuid';
 import { handleSessionTimeoutModal, logout, validateToken } from '../redux/slices/authSlice';
+import { uploadURL } from '../constants';
 
 const Profile = () => {
 
@@ -192,7 +193,7 @@ const Profile = () => {
           <div className="profile-image-container">
             {profilePic ? (
               <img
-                src={typeof profilePic === 'string' ? `http://localhost:8080/uploads/${profilePic}` : URL.createObjectURL(profilePic)}
+                src={typeof profilePic === 'string' ? `${uploadURL}uploads/${profilePic}` : URL.createObjectURL(profilePic)}
                 alt="Profile Picture"
                 className='profile-image'
                 width={200}
